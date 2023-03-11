@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
@@ -36,5 +37,5 @@ public class UserDetails {
     private String email;
 
     @Column(name = "loan_limit")
-    private String loanLimit;
+    private BigDecimal loanLimit;
 }

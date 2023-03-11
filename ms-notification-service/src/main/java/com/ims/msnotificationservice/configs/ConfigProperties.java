@@ -16,14 +16,15 @@ public class ConfigProperties {
     @Value("${email.sender}")
     private String emailSender;
 
-//    @Value("${g2.keyOwner}")
-//    private String keyOwner;
+    @Value("${lendiplatform.rabbitmq.exchange}")
+    private String exchange;
 
-//    @Value("${auth.basicAuthUsername}")
-//    private String basicAuthUsername;
-//
-//    @Value("${auth.basicAuthPassword}")
-//    private String basicAuthPassword;
+    @Value("${lendiplatform.rabbitmq.routingkey}")
+    private String routingKey;
+
+    @Value("${notification.rabbitmq.queue}")
+    private String notificationQueue;
+
 
 
 }

@@ -17,24 +17,9 @@ public class LimitController {
     @Autowired
     LimitService limitService;
 
-    @PostMapping("/addUser")
-    public Mono<ResponseEntity<ApiResponse>> addUser(@Valid @RequestBody ApiRequest apiRequest){
+    @PostMapping("/checkLimit")
+    public Mono<ResponseEntity<ApiResponse>> checkLimit( @Valid @RequestBody ApiRequest apiRequest){
 
-        return limitService.addUser(apiRequest);
-
-    }
-
-    @PostMapping("/getUser")
-    public Mono<ResponseEntity<ApiResponse>> getUser(@Valid @RequestBody ApiRequest apiRequest){
-
-        return limitService.getUser(apiRequest);
-
-    }
-
-    @GetMapping("/getAllUsers")
-    public Mono<ResponseEntity<ApiResponse>> getAllUsers(){
-
-        return limitService.getAllUsers();
-
+        return limitService.checkLimit(apiRequest);
     }
 }

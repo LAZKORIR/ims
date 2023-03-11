@@ -1,4 +1,4 @@
-package com.ims.msloanservice.model;
+package com.ims.apigateway.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,6 +27,8 @@ public class ApiRequest {
     @NotBlank(message = "The msisdn  value is required.")
     @JsonProperty("msisdn")
     public String msisdn;
+    @JsonProperty("amount")
+    public String amount;
     @JsonProperty("email")
     public String email;
 

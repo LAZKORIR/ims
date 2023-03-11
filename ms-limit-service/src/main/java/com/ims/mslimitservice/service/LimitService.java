@@ -1,6 +1,8 @@
 package com.ims.mslimitservice.service;
 
-import com.ims.mslimitservice.UsersRepository;
+import com.ims.mslimitservice.repository.ProductRepository;
+import com.ims.mslimitservice.repository.UsersRepository;
+import com.ims.mslimitservice.entity.Products;
 import com.ims.mslimitservice.entity.UserDetails;
 import com.ims.mslimitservice.model.ApiRequest;
 import com.ims.mslimitservice.model.ApiResponse;
@@ -11,10 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 import reactor.core.publisher.Mono;
 
-import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,12 +26,21 @@ public class LimitService {
     @Autowired
     UsersRepository usersRepository;
 
+    @Autowired
+    ProductRepository productRepository;
+
     final LogHelper logHelper = LogHelper.withInitializer(log, (builder) ->
             builder
-                    .operationName("User Service")
+                    .operationName("Limit Service")
                     .targetSystem("UserDetails"));
 
-    public Mono<ResponseEntity<ApiResponse>> addUser(@Valid @RequestBody ApiRequest apiRequest) {
+    /**
+     * Add user function
+     * saves user details to the database and returns response
+     * @param apiRequest
+     * @return
+     */
+    public Mono<ResponseEntity<ApiResponse>> addUser( ApiRequest apiRequest) {
         ApiResponse apiResponse = new ApiResponse();
         String requestRefid = apiRequest.getRequestRefID();
         apiResponse.setRequestRefID(requestRefid);
@@ -95,6 +105,10 @@ public class LimitService {
                 .body(apiResponse));
     }
 
+    /**
+     * returns details for all available users
+     * @return
+     */
     public Mono<ResponseEntity<ApiResponse>> getAllUsers() {
         ApiResponse apiResponse = new ApiResponse();
         String requestRefid = String.valueOf(UUID.randomUUID());
@@ -143,7 +157,12 @@ public class LimitService {
                 .body(apiResponse));
     }
 
-    public Mono<ResponseEntity<ApiResponse>> getUser(@Valid @RequestBody ApiRequest apiRequest) {
+    /**
+     * gets details for a single user
+     * @param apiRequest
+     * @return
+     */
+    public Mono<ResponseEntity<ApiResponse>> getUser(ApiRequest apiRequest) {
         ApiResponse apiResponse = new ApiResponse();
         String requestRefid = apiRequest.getRequestRefID();
         apiResponse.setRequestRefID(requestRefid);
@@ -197,6 +216,99 @@ public class LimitService {
             apiResponse.setResponseCode("500");
             apiResponse.setRequestRefID(requestRefid);
             apiResponse.setResponseDesc("querying user Failed");
+        }
+        return Mono.just(ResponseEntity.status(status)
+                .body(apiResponse));
+    }
+
+    /**
+     * Check limit method
+     * Returns eligible loan products
+     * @param apiRequest
+     * @return
+     */
+    public Mono<ResponseEntity<ApiResponse>> checkLimit(ApiRequest apiRequest){
+        ApiResponse apiResponse = new ApiResponse();
+        String requestRefid = apiRequest.getRequestRefID();
+        apiResponse.setRequestRefID(requestRefid);
+        HttpStatus status = null;
+
+        logHelper.build()
+                .transactionID(requestRefid)
+                .logMsgType("Check Limit")
+                .logStatus("Processing")
+                .logMsg("Check limit and get products....")
+                .logDetailedMsg("Check limit and Query Products for msisdn : " + Utility.maskMsisdn(apiRequest.getMsisdn()))
+                .info();
+
+        try {
+            UserDetails checkLimit = usersRepository.findByMsisdn(apiRequest.getMsisdn());
+
+            if(checkLimit == null){
+                logHelper.build()
+                        .transactionID(requestRefid)
+                        .logMsgType("Check User limit")
+                        .logStatus("Finished")
+                        .logMsg("Failed")
+                        .logDetailedMsg("User limit details not found")
+                        .info();
+
+                status = HttpStatus.NOT_FOUND;
+                apiResponse.setResponseCode("404");
+                apiResponse.setResponseDesc("User limit details not found");
+
+
+            }else {
+                BigDecimal loanAMount = BigDecimal.valueOf(Long.parseLong(apiRequest.getAmount()));
+
+            List<Products> availableProducts = productRepository.findByMaxLimitLessThanEqual(loanAMount);
+            if(availableProducts.isEmpty()){
+
+                logHelper.build()
+                        .transactionID(requestRefid)
+                        .logMsgType("Query Products")
+                        .logStatus("Finished")
+                        .logMsg("Failed")
+                        .logDetailedMsg("Querying available products  Failed")
+                        .info();
+                apiResponse.setResponseCode("404");
+                apiResponse.setResponseDesc("You don't qualify to any of our products");
+                apiResponse.setTransactionID("");
+                apiResponse.setRequestRefID(requestRefid);
+
+                status = HttpStatus.NOT_FOUND;
+
+            }else{
+
+                logHelper.build()
+                        .transactionID(requestRefid)
+                        .logMsgType("Query Products")
+                        .logStatus("Finished")
+                        .logMsg("Success")
+                        .logDetailedMsg("Querying available products  Succeeded")
+                        .info();
+
+                status = HttpStatus.OK;
+                apiResponse.setResponseCode("200");
+                apiResponse.setResponseDesc("You are eligible for our Loan products");
+                apiResponse.setBody(availableProducts);
+
+            }
+
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+            logHelper.build()
+                    .transactionID(requestRefid)
+                    .logMsgType("Query Products")
+                    .logStatus("Finished")
+                    .logMsg("Failed")
+                    .logDetailedMsg("Querying products Failed with error: " + ex.getMessage())
+                    .info();
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            apiResponse.setResponseCode("500");
+            apiResponse.setRequestRefID(requestRefid);
+            apiResponse.setResponseDesc("Querying products Failed");
         }
         return Mono.just(ResponseEntity.status(status)
                 .body(apiResponse));

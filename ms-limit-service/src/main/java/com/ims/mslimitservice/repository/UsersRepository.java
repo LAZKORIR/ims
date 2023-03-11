@@ -1,4 +1,4 @@
-package com.ims.mslimitservice;
+package com.ims.mslimitservice.repository;
 
 import com.ims.mslimitservice.entity.UserDetails;
 import org.springframework.data.jpa.repository.JpaRepository;

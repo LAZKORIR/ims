@@ -1,4 +1,4 @@
-package com.ims.msnotificationservice.model;
+package com.ims.msnotificationservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -13,11 +13,13 @@ public class ConfigProperties {
     @Value("${spring.application.name}")
     private String appName;
 
-//    @Value("${auth.basicAuthUsername}")
-//    private String basicAuthUsername;
-//
-//    @Value("${auth.basicAuthPassword}")
-//    private String basicAuthPassword;
+    @Value("${limit.rabbitmq.exchange}")
+    private String limitExchange;
 
+    @Value("${limit.rabbitmq.routingkey}")
+    private String limitRoutingKey;
+
+    @Value("${limit.rabbitmq.queue}")
+    private String limitQueue;
 
 }
