@@ -29,6 +29,8 @@ public class ApiRequest {
     public String msisdn;
     @JsonProperty("amount")
     public String amount;
+    @JsonProperty("id")
+    public String id;
     @JsonProperty("email")
     public String email;
 

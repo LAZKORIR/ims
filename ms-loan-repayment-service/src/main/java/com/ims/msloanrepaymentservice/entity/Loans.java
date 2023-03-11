@@ -1,4 +1,4 @@
-package com.ims.msloanrepaymentservice.model;
+package com.ims.msloanrepaymentservice.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -24,27 +24,27 @@ public class ApiGatewayController {
 
     }
 
-//    @PostMapping("/getUser")
-//    public Mono<ResponseEntity<ApiResponse>> getUser(@Valid @RequestBody ApiRequest apiRequest){
-//
-//        return apiGatewayService.getUser(apiRequest);
-//
-//    }
-//
-//    @GetMapping("/getAllUsers")
-//    public Mono<ResponseEntity<ApiResponse>> getAllUsers(){
-//
-//        return apiGatewayService.getAllUsers();
-//
-//    }
+    @PostMapping("/getUser")
+    public Mono<ResponseEntity<ApiResponse>> getUser(@Valid @RequestBody ApiRequest apiRequest){
 
-    @PostMapping("/checkLimit")
-    public Mono<ResponseEntity<ApiResponse>> checkLimit(@Valid @RequestBody ApiRequest apiRequest){
+        return apiGatewayService.getUser(apiRequest);
 
-        return apiGatewayService.requestLoan(apiRequest);
     }
 
-    @PostMapping("/requestLoan")
+    @GetMapping("/getAllUsers")
+    public Mono<ResponseEntity<ApiResponse>> getAllUsers(){
+
+        return apiGatewayService.getAllUsers();
+
+    }
+
+    @PostMapping("/check-limit")
+    public Mono<ResponseEntity<ApiResponse>> checkLimit(@Valid @RequestBody ApiRequest apiRequest){
+
+        return apiGatewayService.checkLimit(apiRequest);
+    }
+
+    @PostMapping("/request-loan")
     public Mono<ResponseEntity<ApiResponse>> requestLoan(@Valid @RequestBody ApiRequest apiRequest){
 
         return apiGatewayService.requestLoan(apiRequest);
@@ -53,6 +53,6 @@ public class ApiGatewayController {
     @PostMapping("/loan-repayment")
     public Mono<ResponseEntity<ApiResponse>> repayLoan(@Valid @RequestBody ApiRequest apiRequest){
 
-        return apiGatewayService.requestLoan(apiRequest);
+        return apiGatewayService.repayLoan(apiRequest);
     }
 }

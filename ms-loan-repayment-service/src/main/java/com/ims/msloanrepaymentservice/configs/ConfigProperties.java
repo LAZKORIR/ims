@@ -19,8 +19,8 @@ public class ConfigProperties {
     @Value("${lendiplatform.rabbitmq.routingkey}")
     private String routingKey;
 
-    @Value("${loan.rabbitmq.queue}")
-    private String loanQueue;
+    @Value("${loanRepay.rabbitmq.queue}")
+    private String loanRepayQueue;
 
     @Value("${notification.rabbitmq.queue}")
     private String notificationQueue;

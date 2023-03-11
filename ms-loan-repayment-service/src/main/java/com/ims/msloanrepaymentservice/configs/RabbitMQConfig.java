@@ -16,7 +16,7 @@ public class RabbitMQConfig {
 
     @Bean
     Queue queue() {
-        return new Queue(configProperties.getLoanQueue(), false);
+        return new Queue(configProperties.getLoanRepayQueue(), false);
     }
 
     @Bean

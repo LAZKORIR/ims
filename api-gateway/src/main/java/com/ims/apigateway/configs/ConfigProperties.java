@@ -27,11 +27,23 @@ public class ConfigProperties {
     @Value("${loan.rabbitmq.queue}")
     private String loanQueue;
 
+    @Value("${loan.repay.rabbitmq.queue}")
+    private String loanRepayQueue;
+
     @Value("${limit.rabbitmq.queue}")
     private String limitQueue;
 
     @Value("${numberOfAllowedRequests}")
     private Integer numberOfAllowedRequests;
+
+    @Value("${checkLimitEndpoint}")
+    private String checkLimitEndpoint;
+
+    @Value("${auth.username}")
+    private String authUsername;
+
+    @Value("${auth.password}")
+    private String authPassword;
 
 
 }

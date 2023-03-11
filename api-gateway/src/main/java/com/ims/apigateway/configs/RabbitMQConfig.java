@@ -24,6 +24,11 @@ public class RabbitMQConfig {
         return new Queue(configProperties.getLoanQueue(), false);
     }
 
+    @Bean
+    Queue loanRepayQueue() {
+        return new Queue(configProperties.getLoanRepayQueue(), false);
+    }
+
     // spring bean for rabbitmq exchange
     @Bean
     public TopicExchange exchange(){
@@ -44,6 +49,15 @@ public class RabbitMQConfig {
     public Binding loanBinding(){
         return BindingBuilder
                 .bind(loanQueue())
+                .to(exchange())
+                .with(configProperties.getRoutingKey());
+    }
+
+    // binding between loan queue and exchange using routing key
+    @Bean
+    public Binding loanRepayBinding(){
+        return BindingBuilder
+                .bind(loanRepayQueue())
                 .to(exchange())
                 .with(configProperties.getRoutingKey());
     }
