@@ -13,6 +13,7 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 @Component
 class requestThrottleFilter implements WebFilter {
@@ -20,12 +21,11 @@ class requestThrottleFilter implements WebFilter {
     @Autowired
     ConfigProperties configProperties;
 
-    //private int MAX_REQUESTS_PER_SECOND = configProperties.getNumberOfRequests(); //or whatever you want it to be
     private LoadingCache<String, Integer> requestCountsPerIpAddress;
     public requestThrottleFilter(){
         super();
         requestCountsPerIpAddress = Caffeine.newBuilder().
-                expireAfterWrite(1, TimeUnit.MINUTES).build(new CacheLoader<String, Integer>() {
+                expireAfterWrite(1, TimeUnit.SECONDS).build(new CacheLoader<String, Integer>() {
                     public Integer load(String key) {
                         return 0;
                     }
@@ -49,12 +49,9 @@ class requestThrottleFilter implements WebFilter {
         return false;
     }
     public String getClientIP(ServerHttpRequest request) {
-//        String xfHeader = request.getHeaders("X-Forwarded-For");
-        System.out.println(request.getHeaders().get("Authorization").get(0));
-        String xfHeader = request.getHeaders().get("Authorization").get(0);
+        String xfHeader = Objects.requireNonNull(request.getHeaders().get("Authorization")).get(0);
         if (xfHeader == null){
-//            return request.getRemoteAddr();
-            return request.getLocalAddress().toString();
+            return Objects.requireNonNull(request.getLocalAddress()).toString();
         }
         return xfHeader.split(",")[0];
     }
@@ -62,17 +59,11 @@ class requestThrottleFilter implements WebFilter {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain filterChain) {
         ServerHttpRequest httpServletRequest = (ServerHttpRequest) exchange.getRequest();
         ServerHttpResponse httpServletResponse = (ServerHttpResponse) exchange.getResponse();
-        String clientIpAddress = getClientIP((ServerHttpRequest) httpServletRequest);
-        System.out.println("****************");
-        //System.out.println(clientIpAddress);
-        System.out.println("****************");
+        String clientIpAddress = getClientIP((ServerHttpRequest) httpServletRequest);;
         if(isMaximumRequestsPerSecondExceeded(clientIpAddress)){
-//            httpServletResponse.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
             httpServletResponse.setStatusCode(HttpStatus.TOO_MANY_REQUESTS);
-//            httpServletResponse.getWriter().write("Too many requests");
             return Mono.empty();
         }
-//        filterChain.doFilter(servletRequest, servletResponse);
         return filterChain.filter(exchange);
     }
 }

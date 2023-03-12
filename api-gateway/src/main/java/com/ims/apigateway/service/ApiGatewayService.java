@@ -126,6 +126,10 @@ public class ApiGatewayService {
             loanDetails.setRequestRefID(apiRequest.getRequestRefID());
             loanDetails.setSourceSystem(apiRequest.getSourceSystem());
             loanDetails.setMsisdn(apiRequest.getMsisdn());
+            loanDetails.setProductID(apiRequest.getProductId());
+            loanDetails.setUserID(apiRequest.getUserId());
+
+
                 logHelper.build()
                         .transactionID(requestRefid)
                         .logMsgType("Request Loan")
@@ -279,4 +283,26 @@ public class ApiGatewayService {
 
         return Mono.just(ResponseEntity.status(HttpStatus.OK).body(apiResponse));
     }
+
+    /**
+     * This function returns user details using supplied msisdn
+     * @param apiRequest
+     * @return
+     */
+    public Mono<ResponseEntity<ApiResponse>> sendMail(ApiRequest apiRequest){
+
+        logHelper.build()
+                .transactionID(apiRequest.getRequestRefID())
+                .logMsgType("Send Mail")
+                .logStatus("Processing")
+                .logMsg("Sending notification email : ")
+                .logDetailedMsg("Sending email to : " + Utility.maskMsisdn(apiRequest.getMsisdn()))
+                .info();
+
+        ApiResponse apiResponse=
+                restTemplate.postForEntity(configProperties.getNotificationEndpoint(),apiRequest,ApiResponse.class).getBody();
+
+        return Mono.just(ResponseEntity.status(HttpStatus.OK).body(apiResponse));
+    }
+
 }

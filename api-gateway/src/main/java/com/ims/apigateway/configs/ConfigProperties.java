@@ -21,13 +21,19 @@ public class ConfigProperties {
     @Value("${lendiplatform.rabbitmq.exchange}")
     private String exchange;
 
-    @Value("${lendiplatform.rabbitmq.routingkey}")
-    private String routingKey;
+    @Value("${loan.rabbitmq.routingkey}")
+    private String loanRoutingKey;
+
+    @Value("${limit.rabbitmq.routingkey}")
+    private String limitRoutingKey;
+
+    @Value("${loanRepay.rabbitmq.routingkey}")
+    private String repayLoanRoutingKey;
 
     @Value("${loan.rabbitmq.queue}")
     private String loanQueue;
 
-    @Value("${loan.repay.rabbitmq.queue}")
+    @Value("${loanRepay.rabbitmq.queue}")
     private String loanRepayQueue;
 
     @Value("${limit.rabbitmq.queue}")
@@ -38,6 +44,9 @@ public class ConfigProperties {
 
     @Value("${checkLimitEndpoint}")
     private String checkLimitEndpoint;
+
+    @Value("${notificationEndpoint}")
+    private String notificationEndpoint;
 
     @Value("${auth.username}")
     private String authUsername;

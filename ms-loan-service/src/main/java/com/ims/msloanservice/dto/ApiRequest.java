@@ -27,6 +27,12 @@ public class ApiRequest {
     @NotBlank(message = "The msisdn  value is required.")
     @JsonProperty("msisdn")
     public String msisdn;
+    @JsonProperty("amount")
+    public String amount;
+    @JsonProperty("productId")
+    public String productId;
+    @JsonProperty("userId")
+    public Integer userId;
     @JsonProperty("email")
     public String email;
 

@@ -16,14 +16,17 @@ public class ConfigProperties {
     @Value("${lendiplatform.rabbitmq.exchange}")
     private String exchange;
 
-    @Value("${lendiplatform.rabbitmq.routingkey}")
-    private String routingKey;
+    @Value("${loanRepay.rabbitmq.routingkey}")
+    private String loanRepayRoutingKey;
 
     @Value("${loanRepay.rabbitmq.queue}")
     private String loanRepayQueue;
 
     @Value("${notification.rabbitmq.queue}")
     private String notificationQueue;
+
+    @Value("${notification.rabbitmq.routingkey}")
+    private String notificationRoutingKey;
 
 
 }

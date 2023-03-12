@@ -14,4 +14,5 @@ public class NotificationDetails {
     private String recipient;
     private String subject;
     private String text;
+    private  String mode;
 }

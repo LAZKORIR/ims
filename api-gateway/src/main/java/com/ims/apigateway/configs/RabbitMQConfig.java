@@ -15,7 +15,7 @@ public class RabbitMQConfig {
     ConfigProperties configProperties;
 
     @Bean
-    Queue queue() {
+    Queue limitQueue() {
         return new Queue(configProperties.getLimitQueue(), false);
     }
 
@@ -39,9 +39,9 @@ public class RabbitMQConfig {
     @Bean
     public Binding binding(){
         return BindingBuilder
-                .bind(queue())
+                .bind(limitQueue())
                 .to(exchange())
-                .with(configProperties.getRoutingKey());
+                .with(configProperties.getLimitRoutingKey());
     }
 
     // binding between loan queue and exchange using routing key
@@ -50,8 +50,9 @@ public class RabbitMQConfig {
         return BindingBuilder
                 .bind(loanQueue())
                 .to(exchange())
-                .with(configProperties.getRoutingKey());
+                .with(configProperties.getLoanRoutingKey());
     }
+
 
     // binding between loan queue and exchange using routing key
     @Bean
@@ -59,7 +60,7 @@ public class RabbitMQConfig {
         return BindingBuilder
                 .bind(loanRepayQueue())
                 .to(exchange())
-                .with(configProperties.getRoutingKey());
+                .with(configProperties.getRepayLoanRoutingKey());
     }
 
     @Bean

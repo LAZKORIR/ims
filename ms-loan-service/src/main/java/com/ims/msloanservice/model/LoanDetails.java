@@ -16,6 +16,6 @@ public class LoanDetails implements Serializable {
     private String sourceSystem;
     private String msisdn;
     private BigDecimal amount;
-    private  String mode;
     private  String productID;
+    private  Integer userID;
 }

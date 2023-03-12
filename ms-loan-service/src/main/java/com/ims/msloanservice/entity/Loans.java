@@ -38,4 +38,7 @@ public class Loans {
     @Column(name = "status")
     private String status;
 
+    @Column(name = "user_id")
+    private Integer userid;
+
 }

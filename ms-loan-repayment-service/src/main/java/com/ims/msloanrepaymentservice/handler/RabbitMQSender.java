@@ -18,7 +18,7 @@ public class RabbitMQSender {
 
 
     public void sendNotification(NotificationDetails notificationDetails) {
-        rabbitTemplate.convertAndSend(configProperties.getExchange(), configProperties.getRoutingKey(), notificationDetails);
+        rabbitTemplate.convertAndSend(configProperties.getExchange(), configProperties.getNotificationRoutingKey(), notificationDetails);
         System.out.println("Send loan repayment Details   msg = " + notificationDetails);
 
     }

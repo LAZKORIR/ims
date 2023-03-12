@@ -36,6 +36,6 @@ public class UserDetails {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "loan_limit")
-    private BigDecimal loanLimit;
+    @Column(name = "loan_amount")
+    private BigDecimal loanAmount;
 }

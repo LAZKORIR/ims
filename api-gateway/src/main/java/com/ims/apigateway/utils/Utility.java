@@ -73,20 +73,4 @@ public class Utility {
         return matcher.matches();
     }
 
-    public static boolean validMonthlyIncomeRange(String monthlyIncomeRange, int minRange, int maxRange) {
-        if(monthlyIncomeRange == null || monthlyIncomeRange.trim().length() == 0)
-            return false;
-
-        try {
-            int incomeRange = Integer.parseInt(monthlyIncomeRange);
-
-            if(incomeRange >= minRange && incomeRange <= maxRange)
-                return true;
-
-            return false;
-        }
-        catch(NumberFormatException exception) {
-            return false;
-        }
-    }
 }

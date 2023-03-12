@@ -10,12 +10,10 @@ import com.ims.msloanrepaymentservice.repository.LoanRepository;
 import com.ims.msloanrepaymentservice.utils.LogHelper;
 import com.ims.msloanrepaymentservice.utils.Utility;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.List;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Service
@@ -37,12 +35,11 @@ public class RepaymentService {
                     .targetSystem("Notification Service"));
 
     /**
-     * Rabbit mq lister for loan requests
-     * Recieves the request for processing
+     * Receives the request for processing
+     * Does the repay loan business logic
      * @param repayLoanDetails
      */
-    @RabbitListener(queues = "loan.queue")
-    public void repayLoan(RepayLoanDetails repayLoanDetails){
+    public void repayLoan(RepayLoanDetails repayLoanDetails) {
         ApiResponse apiResponse = new ApiResponse();
         String requestRefid = repayLoanDetails.getRequestRefID();
         apiResponse.setRequestRefID(requestRefid);
@@ -59,56 +56,71 @@ public class RepaymentService {
 
             Optional<Loans> loans = loanRepository.findById(Integer.valueOf(repayLoanDetails.getId()));
 
-            loans.ifPresent(loan -> {
+            loans.ifPresentOrElse(loan -> {
 
-                /**
-                 * updates a record if the amount is not 5000
-                 */
+                        /**
+                         * updates a record if the amount is not 5000
+                         * any other value weather higher or less than 5000 as not as it is not 500
+                         * updates loans table, computes the balance of the loan and update the status
+                         */
+                        BigDecimal amount = loan.getAmount().subtract(repayLoanDetails.getAmount());
+                        String status="";
+                        if(Integer.parseInt(String.valueOf(amount)) > 0){
+                            status = "Partially Paid";
+                        } else if (Integer.parseInt(String.valueOf(amount)) == 0) {
+                            status = "Fully paid";
+                        }else{
+                            status ="Over paid";
+                        }
+                        loan.setAmount(amount);
+                        loan.setStatus(status);
+                        loan.setReferenceID(repayLoanDetails.getRequestRefID());
+                        loan.setMsisdn(repayLoanDetails.getMsisdn());
 
-                loan.setAmount(loan.getAmount().subtract(repayLoanDetails.getAmount()));
-                loan.setStatus("Paid");
-                loan.setReferenceID(repayLoanDetails.getRequestRefID());
-                loan.setMsisdn(repayLoanDetails.getMsisdn());
+                        loanRepository.save(loan);
 
-                loanRepository.save(loan);
+                        NotificationDetails notificationDetails = new NotificationDetails();
+                        notificationDetails.setRecipient(repayLoanDetails.getMsisdn());
+                        notificationDetails.setSubject("Loan Repayment");
+                        notificationDetails.setRequestRefID(repayLoanDetails.getRequestRefID());
+                        notificationDetails.setSourceSystem(configProperties.getAppName());
+                        notificationDetails.setText("Dear Customer Your loan of  " + loan.getAmount() + " Has been "+status);
 
-                NotificationDetails notificationDetails= new NotificationDetails();
-                notificationDetails.setRecipient(repayLoanDetails.getMsisdn());
-                notificationDetails.setSubject("Loan Repayment");
-                notificationDetails.setRequestRefID(repayLoanDetails.getRequestRefID());
-                notificationDetails.setSourceSystem(configProperties.getAppName());
-                notificationDetails.setText("Dear Customer Your loan of  "+repayLoanDetails.getAmount() +" Has been Repaid");
+                        rabbitMQSender.sendNotification(notificationDetails);
 
-                rabbitMQSender.sendNotification(notificationDetails);
+                        logHelper.build()
+                                .transactionID(requestRefid)
+                                .logMsgType("Credit Wallet")
+                                .logStatus("Finished")
+                                .logMsg("Success")
+                                .logDetailedMsg("Loan Credit  Succeeded")
+                                .info();
 
-                logHelper.build()
-                        .transactionID(requestRefid)
-                        .logMsgType("Credit Wallet")
-                        .logStatus("Finished")
-                        .logMsg("Success")
-                        .logDetailedMsg("Loan Credit  Succeeded")
-                        .info();
+                    },
+                    () -> {
+                        /**
+                         * Send notification to the user indicating the failure
+                         * build the pojo and submit to a queue
+                         */
 
-            });
+                        NotificationDetails notificationDetails = new NotificationDetails();
+                        notificationDetails.setRecipient(repayLoanDetails.getMsisdn());
+                        notificationDetails.setSubject("Loan Repayment Failed");
+                        notificationDetails.setRequestRefID(repayLoanDetails.getRequestRefID());
+                        notificationDetails.setSourceSystem(configProperties.getAppName());
+                        notificationDetails.setText("Dear Customer We are not able to complete your loan repayment request at the moment. Try again later");
 
-                NotificationDetails notificationDetails= new NotificationDetails();
-                notificationDetails.setRecipient(repayLoanDetails.getMsisdn());
-                notificationDetails.setSubject("Loan Repayment Failed");
-                notificationDetails.setRequestRefID(repayLoanDetails.getRequestRefID());
-                notificationDetails.setSourceSystem(configProperties.getAppName());
-                notificationDetails.setText("Dear Customer We are not able to complete your loan repayment request at the moment. Try again later");
+                        rabbitMQSender.sendNotification(notificationDetails);
 
-                rabbitMQSender.sendNotification(notificationDetails);
-
-                logHelper.build()
-                        .transactionID(requestRefid)
-                        .logMsgType("Loan Repayment")
-                        .logStatus("Finished")
-                        .logMsg("Failed")
-                        .logDetailedMsg("Failed to Repay your loan")
-                        .info();
-
-        }catch (Exception ex){
+                        logHelper.build()
+                                .transactionID(requestRefid)
+                                .logMsgType("Loan Repayment")
+                                .logStatus("Finished")
+                                .logMsg("Failed")
+                                .logDetailedMsg("Failed to Repay your loan")
+                                .info();
+                    });
+        } catch (Exception ex) {
 
             logHelper.build()
                     .transactionID(requestRefid)

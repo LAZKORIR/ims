@@ -31,6 +31,10 @@ public class ApiRequest {
     public String amount;
     @JsonProperty("id")
     public String id;
+    @JsonProperty("productId")
+    public String productId;
+    @JsonProperty("userId")
+    public Integer userId;
     @JsonProperty("email")
     public String email;
 

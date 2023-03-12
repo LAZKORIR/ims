@@ -23,7 +23,7 @@ public class RepayLoanListener {
      * Listener for manual repayment of loans
      * @param repayLoanDetails
      */
-    @RabbitListener(queues = "loan.repay.queue")
+    @RabbitListener(queues = "loanRepay.queue")
     public void repayLoan(RepayLoanDetails repayLoanDetails){
 
         logHelper.build()

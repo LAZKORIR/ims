@@ -1,4 +1,4 @@
-package com.ims.msloanrepaymentservice.listener;
+package com.ims.msloanrepaymentservice.scheduled;
 
 import com.ims.msloanrepaymentservice.configs.ConfigProperties;
 import com.ims.msloanrepaymentservice.entity.Loans;
@@ -6,7 +6,6 @@ import com.ims.msloanrepaymentservice.model.RepayLoanDetails;
 import com.ims.msloanrepaymentservice.repository.LoanRepository;
 import com.ims.msloanrepaymentservice.service.RepaymentService;
 import com.ims.msloanrepaymentservice.utils.LogHelper;
-import com.ims.msloanrepaymentservice.utils.Utility;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

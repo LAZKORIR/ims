@@ -1,0 +1,336 @@
+{
+	"info": {
+		"_postman_id": "d5566031-400d-40c1-867d-32c9265e1862",
+		"name": "LendingPlatform",
+		"description": "This is the api specification for lending platform endpoints,\n\nThe description are there for each endpoint.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "7495088"
+	},
+	"item": [
+		{
+			"name": "sendMail",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "ZGV2ZWxvcC1hcGktdXNlcg==",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "api-user",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"requestRefID\":\"ims-lp-{{$guid}}\",\r\n    \"recipient\":\"lazaruskorir95@gmail.com\",\r\n    \"sourceSystem\":\"mobile-app\",\r\n    \"subject\":\"loan repayment\",\r\n    \"text\":\"Dear customer, your loan repayment was successful\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8788/api/v1/sendMail",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8788",
+					"path": [
+						"api",
+						"v1",
+						"sendMail"
+					]
+				},
+				"description": "This endpoint can be intergrated to any other system for sending emails, provided you supply reuired parameters.\n\nThis is an additional, since for this project the service receives request from a queue and processes them asynchronously."
+			},
+			"response": []
+		},
+		{
+			"name": "addUser",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "ZGV2ZWxvcC1hcGktdXNlcg==",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "api-user",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"RequestRefID\": \"app-{{$guid}}\",\r\n    \"firstname\": \"Lazarus\",\r\n    \"lastname\": \"Korir\",\r\n    \"SourceSystem\": \"Mobile app\",\r\n    \"msisdn\": \"254723846453\",\r\n    \"email\": \"lazaruskorir95@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8785/api/v1/addUser",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8785",
+					"path": [
+						"api",
+						"v1",
+						"addUser"
+					]
+				},
+				"description": "The add user endpoint is for registering new customers to our platform.\n\nRegistration of users is processed asynchronously, you invoke this api, it returns an acknowledgement and then it queues the request. once the request is processed the customer will receive a notification.\n\nThis api can be enhanced to send callbacks whenever processing is complete"
+			},
+			"response": []
+		},
+		{
+			"name": "Check Limit",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "ZGV2ZWxvcC1hcGktdXNlcg==",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "api-user",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"RequestRefID\": \"app-{{$guid}}\",\r\n    \"SourceSystem\": \"Mobile app\",\r\n    \"msisdn\": \"254723846453\",\r\n    \"amount\":\"1000\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8784/api/v1/check-limit",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8784",
+					"path": [
+						"api",
+						"v1",
+						"check-limit"
+					]
+				},
+				"description": "Check Limit endpoint is for checking if the customer is eligible for any of the products in the system.\n\nThe result can be a list of products for the customer to choose or can return one product or none depending on the customers eligibility.\n\nThis api is synchronous since the list is needed to be presented to the customer on the go, so they can choose which one to go with in requesting a loan."
+			},
+			"response": []
+		},
+		{
+			"name": "Request Loan",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "ZGV2ZWxvcC1hcGktdXNlcg==",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "api-user",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"RequestRefID\": \"app-{{$guid}}\",\r\n    \"SourceSystem\": \"Mobile app\",\r\n    \"msisdn\": \"254723846453\",\r\n    \"amount\":\"1000\",\r\n    \"productID\":\"1001\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8784/api/v1/request-loan",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8784",
+					"path": [
+						"api",
+						"v1",
+						"request-loan"
+					]
+				},
+				"description": "This is now the actual endpoinnt for requeting for the loan.\n\nThe api is asynchronous, this means after you invoke it you will get an acknoledgement for the receipt of your request, and then the request is queued for processing and the notification sent back to the customer whether the wallet has been credited or not.\n\nThis endpoint will be enhanced later to send back the callback for further analysis by the client."
+			},
+			"response": []
+		},
+		{
+			"name": "Repay Loan",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "ZGV2ZWxvcC1hcGktdXNlcg==",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "api-user",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"RequestRefID\": \"app-{{$guid}}\",\r\n    \"SourceSystem\": \"Mobile app\",\r\n    \"msisdn\": \"254723846453\",\r\n    \"amount\":\"1000\",\r\n    \"id\":\"11\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8784/api/v1/loan-repayment",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8784",
+					"path": [
+						"api",
+						"v1",
+						"loan-repayment"
+					]
+				},
+				"description": "StartFragment\n\nThis endpoinnt is for manual repayment of the loan.\n\nThe api is asynchronous, this means after you invoke it you will get an acknoledgement for the receipt of your request, and then the request is queued for processing and the notification sent back to the customer whether the loan has been settled or not.\n\nThis endpoint will be enhanced later to send back the callback for further analysis by the client.\n\nRepay loan also has a system process which is a cron job that runs every midnight , checking the due loans and trying to settle them automatically from the customers wallet.\n\nEndFragment"
+			},
+			"response": []
+		},
+		{
+			"name": "getUser",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "ZGV2ZWxvcC1hcGktdXNlcg==",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "api-user",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"RequestRefID\": \"app-{{$guid}}\",\r\n    \"SourceSystem\": \"Mobile app\",\r\n    \"msisdn\": \"254723846453\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8784/api/v1/getUser",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8784",
+					"path": [
+						"api",
+						"v1",
+						"getUser"
+					]
+				},
+				"description": "This is api is querying details of a single user,\n\nThe endpoint if synchronous since the details are required on the go."
+			},
+			"response": []
+		},
+		{
+			"name": "get All Users",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "ZGV2ZWxvcC1hcGktdXNlcg==",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "api-user",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"RequestRefID\": \"app-{{$guid}}\",\r\n    \"SourceSystem\": \"Mobile app\",\r\n    \"msisdn\": \"254723846453\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8784/api/v1/getAllUsers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8784",
+					"path": [
+						"api",
+						"v1",
+						"getAllUsers"
+					]
+				},
+				"description": "This endpoint is used to query all registered users in the system.\n\nIts a get request and you dont need any body."
+			},
+			"response": []
+		}
+	]
+}

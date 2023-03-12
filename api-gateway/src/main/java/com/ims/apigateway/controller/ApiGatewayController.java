@@ -23,7 +23,12 @@ public class ApiGatewayController {
         return apiGatewayService.addUser(apiRequest);
 
     }
+    @PostMapping("/sendMail")
+    public Mono<ResponseEntity<ApiResponse>>sendMail(@Valid @RequestBody ApiRequest apiRequest){
 
+        return apiGatewayService.sendMail(apiRequest);
+
+    }
     @PostMapping("/getUser")
     public Mono<ResponseEntity<ApiResponse>> getUser(@Valid @RequestBody ApiRequest apiRequest){
 
