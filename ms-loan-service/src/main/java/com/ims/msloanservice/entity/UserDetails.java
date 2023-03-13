@@ -1,4 +1,4 @@
-package com.ims.mslimitservice.entity;
+package com.ims.msloanservice.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

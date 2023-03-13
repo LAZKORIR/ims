@@ -5,11 +5,13 @@ import com.ims.msloanservice.dto.ApiRequest;
 import com.ims.msloanservice.dto.ApiResponse;
 import com.ims.msloanservice.entity.Loans;
 import com.ims.msloanservice.entity.Products;
+import com.ims.msloanservice.entity.UserDetails;
 import com.ims.msloanservice.handler.RabbitMQSender;
 import com.ims.msloanservice.model.LoanDetails;
 import com.ims.msloanservice.model.NotificationDetails;
 import com.ims.msloanservice.repository.LoanRepository;
 import com.ims.msloanservice.repository.ProductRepository;
+import com.ims.msloanservice.repository.UsersRepository;
 import com.ims.msloanservice.utils.LogHelper;
 import com.ims.msloanservice.utils.Utility;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,7 @@ import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Optional;
 
 
 @Service
@@ -32,6 +35,9 @@ public class LoanService {
 
     @Autowired
     LoanRepository loanRepository;
+
+    @Autowired
+    UsersRepository usersRepository;
 
     @Autowired
     RabbitMQSender rabbitMQSender;
@@ -70,7 +76,7 @@ public class LoanService {
             String mode = products.getMode();
             if(creditLoan.equalsIgnoreCase("success")){
                 /**
-                 * create a record if the amount is not 5000
+                 * create a loan record for the user if the amount is not 5000
                  */
                 LocalDate localDate;
                 if(loanDetails.getProductID().equalsIgnoreCase("1001")){
@@ -88,6 +94,15 @@ public class LoanService {
                 loans.setUserid(loanDetails.getUserID());
 
                 loanRepository.save(loans);
+
+                /**
+                 * update wallet of the customer in the users database
+                 */
+                Optional<UserDetails> userDetails = usersRepository.findById(loanDetails.getUserID());
+                userDetails.ifPresent(user ->{
+                    user.setWalletAmount(loans.getAmount());
+                    usersRepository.save(user);
+                });
 
                 NotificationDetails notificationDetails= new NotificationDetails();
                 notificationDetails.setRecipient(loanDetails.getMsisdn());
@@ -142,7 +157,7 @@ public class LoanService {
     }
 
     /**
-     * Manual initiation from the http direct
+     * Manual initiation from the http direct to the service
      * an alternative of the rabbit mq queue
      * @param apiRequest
      * @return

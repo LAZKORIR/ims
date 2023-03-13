@@ -22,7 +22,7 @@ public class Loans {
     @Column(name = "product_id")
     private String productID;
 
-    @Column(name = "reference_id")
+    @Column(name = "request_ref_id")
     private String referenceID;
 
     @Column(name = "amount")

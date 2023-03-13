@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MsUserServiceApplication {
+public class MsUserLimitApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MsUserServiceApplication.class, args);
+		SpringApplication.run(MsUserLimitApplication.class, args);
 	}
 
 }

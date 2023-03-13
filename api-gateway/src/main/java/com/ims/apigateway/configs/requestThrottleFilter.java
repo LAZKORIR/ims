@@ -3,7 +3,6 @@ package com.ims.apigateway.configs;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -18,8 +17,8 @@ import java.util.concurrent.TimeUnit;
 @Component
 class requestThrottleFilter implements WebFilter {
 
-    @Autowired
-    ConfigProperties configProperties;
+//    @Autowired
+//    ConfigProperties configProperties;
 
     private LoadingCache<String, Integer> requestCountsPerIpAddress;
     public requestThrottleFilter(){
@@ -36,7 +35,7 @@ class requestThrottleFilter implements WebFilter {
         Integer requests = 0;
         requests = requestCountsPerIpAddress.get(clientIpAddress);
         if(requests != null){
-            if(requests > configProperties.getNumberOfAllowedRequests()) {
+            if(requests > 10) {
                 requestCountsPerIpAddress.asMap().remove(clientIpAddress);
                 requestCountsPerIpAddress.put(clientIpAddress, requests);
                 return true;

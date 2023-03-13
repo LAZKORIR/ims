@@ -73,6 +73,7 @@ public class LimitService {
                 user.setSourceSystem(apiRequest.getSourceSystem());
                 user.setMsisdn(apiRequest.getMsisdn());
                 user.setRequestRefID(requestRefid);
+                user.setWalletAmount(BigDecimal.valueOf(0));
 
                 usersRepository.save(user);
                 logHelper.build()
